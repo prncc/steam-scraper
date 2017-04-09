@@ -25,9 +25,9 @@ def load_product(response):
 
     # Publication details.
     details = response.css('.details_block').extract_first()
-    if details:
+    try:
         details = details.split('<br>')
-        
+
         for line in details:
             line = re.sub('<[^<]+?>', '', line)  # Remove tags.
             line = re.sub('[\r\t\n]', '', line).strip()
@@ -41,7 +41,10 @@ def load_product(response):
                 if prop in line:
                     item = line.replace(prop, '').strip()
                     loader.add_value(name, item)
+    except:
+        pass
 
+    loader.add_css('app_name', '.apphub_AppName ::text')
     loader.add_css('specs', '.game_area_details_specs a ::text')
     loader.add_css('tags', 'a.app_tag::text')
 

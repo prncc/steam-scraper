@@ -60,6 +60,7 @@ def str_to_int(x):
 class ProductItem(scrapy.Item):
     url = scrapy.Field()
     id = scrapy.Field()
+    app_name = scrapy.Field()
     reviews_url = scrapy.Field()
     title = scrapy.Field()
     genres = scrapy.Field(
