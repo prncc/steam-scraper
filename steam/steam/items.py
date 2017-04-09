@@ -5,6 +5,17 @@ from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, Compose, TakeFirst
 
 
+class StripText:
+    def __init__(self, chars=' \r\t\n'):
+        self.chars = chars
+
+    def __call__(self, value):
+        try:
+            return value.strip(self.chars)
+        except:
+            return value
+
+
 def standardize_date(x):
     """
     Convert x from recognized input formats to desired output format,
@@ -26,8 +37,12 @@ def standardize_date(x):
     return x
 
 
-def strip_text(x):
-    return x.strip(u'\n\t\r')
+def str_to_float(x):
+    x = x.replace(',', '')
+    try:
+        return float(x)
+    except:
+        return x
 
 
 class ProductItem(scrapy.Item):
@@ -42,11 +57,17 @@ class ProductItem(scrapy.Item):
         output_processor=Compose(TakeFirst(), standardize_date)
     )
     specs = scrapy.Field(
-        output_processor=MapCompose(strip_text)
+        output_processor=MapCompose(StripText())
     )
     tags = scrapy.Field(
-        output_processor=MapCompose(strip_text)
+        output_processor=MapCompose(StripText())
     )
+    price = scrapy.Field(
+        output_processor=Compose(TakeFirst(),
+                                 StripText(chars=' $\n\t\r'),
+                                 str_to_float)
+    )
+    discount_price = scrapy.Field()
 
 
 class ProductItemLoader(ItemLoader):
