@@ -49,9 +49,13 @@ def str_to_float(x):
     except:
         return x
 
-def debug_genre(x):
-    logger.debug("genre: "+x)
-    return x
+
+def str_to_int(x):
+    try:
+        return int(str_to_float(x))
+    except:
+        return x
+
 
 class ProductItem(scrapy.Item):
     url = scrapy.Field()
@@ -83,7 +87,10 @@ class ProductItem(scrapy.Item):
                                  str_to_float)
     )
     sentiment = scrapy.Field()
+    metascore = scrapy.Field(
+        output_processor=Compose(TakeFirst(), StripText(), str_to_int)
+    )
 
 
 class ProductItemLoader(ItemLoader):
-    default_output_processor = Compose(TakeFirst(), StripText())
+    default_output_processor=Compose(TakeFirst(), StripText())
