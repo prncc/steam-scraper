@@ -57,7 +57,9 @@ class ProductSpider(CrawlSpider):
     allowed_domains=["steampowered.com"]
 
     rules = [
-        Rule(LinkExtractor(allow='/app/(.+)/', restrict_css='#search_result_container'),
+        Rule(LinkExtractor(
+                allow='/app/(.+)/',
+                restrict_css='#search_result_container'),
              callback='parse_product')
     ]
 
