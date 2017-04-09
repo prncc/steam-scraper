@@ -31,7 +31,7 @@ def load_product(response):
         line = re.sub('[\r\t\n]', '', line).strip()
         for prop, name in [
             ('Title:', 'title'),
-            ('Genre:', 'genre'),
+            ('Genre:', 'genres'),
             ('Developer:', 'developer'),
             ('Publisher:', 'publisher'),
             ('Release Date:', 'release_date')

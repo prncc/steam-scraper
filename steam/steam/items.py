@@ -58,7 +58,7 @@ class ProductItem(scrapy.Item):
     id = scrapy.Field()
     reviews_url = scrapy.Field()
     title = scrapy.Field()
-    genre = scrapy.Field(
+    genres = scrapy.Field(
         output_processor=Compose(TakeFirst(), lambda x: x.split(','), MapCompose(StripText()))
     )
     developer = scrapy.Field(output_processor=TakeFirst())
