@@ -61,7 +61,7 @@ class ProductItem(scrapy.Item):
     genres = scrapy.Field(
         output_processor=Compose(TakeFirst(), lambda x: x.split(','), MapCompose(StripText()))
     )
-    developer = scrapy.Field(output_processor=TakeFirst())
+    developer = scrapy.Field()
     publisher = scrapy.Field()
     release_date = scrapy.Field(
         output_processor=Compose(TakeFirst(), StripText(), standardize_date)
@@ -82,7 +82,8 @@ class ProductItem(scrapy.Item):
                                  StripText(chars=' $\n\t\r'),
                                  str_to_float)
     )
+    sentiment = scrapy.Field()
 
 
 class ProductItemLoader(ItemLoader):
-    default_output_processor = TakeFirst()
+    default_output_processor = Compose(TakeFirst(), StripText())

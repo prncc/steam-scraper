@@ -49,6 +49,10 @@ def load_product(response):
         loader.add_css('discount_price', '.discount_final_price ::text')
     loader.add_value('price', price)
 
+    sentiment = response.css('.game_review_summary').xpath(
+        '../*[@itemprop="description"]/text()').extract()
+    loader.add_value('sentiment', sentiment)
+
     return loader.load_item()
 
 
