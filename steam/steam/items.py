@@ -1,8 +1,11 @@
 from datetime import datetime, date
+import logging
 
 import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, Compose, TakeFirst
+
+logger = logging.getLogger(__name__)
 
 
 class StripText:
@@ -22,16 +25,18 @@ def standardize_date(x):
     or leave unchanged if input format is not recognized.
     """
     try:
-        return datetime.strptime(x, "%B %d, %Y").strftime("%Y-%m-%d")
-    except ValueError:
+        return datetime.strptime(x, "%b %d, %Y").strftime("%Y-%m-%d")
+    except ValueError as e:
+        logger.debug(f"Failed to process '{x}': {e.args[0]}.")
         pass
 
-    # Induce year.
+    # Induce year to current year if it is missing.
     try:
-        d = datetime.strptime(x, "%B %d")
+        d = datetime.strptime(x, "%b %d")
         d = d.replace(year=date.today().year)
         return d.strftime("%Y-%m-%d")
-    except ValueError:
+    except ValueError as e:
+        logger.debug(f"Failed to process '{x}': {e.args[0]}.")
         pass
 
     return x
@@ -44,17 +49,22 @@ def str_to_float(x):
     except:
         return x
 
+def debug_genre(x):
+    logger.debug("genre: "+x)
+    return x
 
 class ProductItem(scrapy.Item):
     url = scrapy.Field()
     id = scrapy.Field()
     reviews_url = scrapy.Field()
     title = scrapy.Field()
-    genre = scrapy.Field()
+    genre = scrapy.Field(
+        output_processor=Compose(TakeFirst(), lambda x: x.split(','), MapCompose(StripText()))
+    )
     developer = scrapy.Field(output_processor=TakeFirst())
     publisher = scrapy.Field()
     release_date = scrapy.Field(
-        output_processor=Compose(TakeFirst(), standardize_date)
+        output_processor=Compose(TakeFirst(), StripText(), standardize_date)
     )
     specs = scrapy.Field(
         output_processor=MapCompose(StripText())
@@ -67,7 +77,11 @@ class ProductItem(scrapy.Item):
                                  StripText(chars=' $\n\t\r'),
                                  str_to_float)
     )
-    discount_price = scrapy.Field()
+    discount_price = scrapy.Field(
+        output_processor=Compose(TakeFirst(),
+                                 StripText(chars=' $\n\t\r'),
+                                 str_to_float)
+    )
 
 
 class ProductItemLoader(ItemLoader):
