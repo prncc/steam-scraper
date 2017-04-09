@@ -45,8 +45,8 @@ def load_product(response):
 
     price = response.css('.game_purchase_price ::text').extract_first()
     if not price:
-        price = response.css(".discount_original_price ::text").extract_first()
-        loader.add_css(".discount_final_price ::text")
+        price = response.css('.discount_original_price ::text').extract_first()
+        loader.add_css('discount_price', '.discount_final_price ::text')
     loader.add_value('price', price)
 
     return loader.load_item()
