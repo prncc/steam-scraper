@@ -53,6 +53,10 @@ def load_product(response):
         '../*[@itemprop="description"]/text()').extract()
     loader.add_value('sentiment', sentiment)
 
+    loader.add_xpath(
+        'metascore',
+        '//div[@id="game_area_metascore"]/div[contains(@class, "score")]/text()')
+
     return loader.load_item()
 
 
