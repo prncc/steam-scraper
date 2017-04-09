@@ -24,21 +24,23 @@ def load_product(response):
         loader.add_value('id', id)
 
     # Publication details.
-    details = response.css('.details_block').extract_first().split('<br>')
-
-    for line in details:
-        line = re.sub('<[^<]+?>', '', line)  # Remove tags.
-        line = re.sub('[\r\t\n]', '', line).strip()
-        for prop, name in [
-            ('Title:', 'title'),
-            ('Genre:', 'genres'),
-            ('Developer:', 'developer'),
-            ('Publisher:', 'publisher'),
-            ('Release Date:', 'release_date')
-        ]:
-            if prop in line:
-                item = line.replace(prop, '').strip()
-                loader.add_value(name, item)
+    details = response.css('.details_block').extract_first()
+    if details:
+        details = details.split('<br>')
+        
+        for line in details:
+            line = re.sub('<[^<]+?>', '', line)  # Remove tags.
+            line = re.sub('[\r\t\n]', '', line).strip()
+            for prop, name in [
+                ('Title:', 'title'),
+                ('Genre:', 'genres'),
+                ('Developer:', 'developer'),
+                ('Publisher:', 'publisher'),
+                ('Release Date:', 'release_date')
+            ]:
+                if prop in line:
+                    item = line.replace(prop, '').strip()
+                    loader.add_value(name, item)
 
     loader.add_css('specs', '.game_area_details_specs a ::text')
     loader.add_css('tags', 'a.app_tag::text')
@@ -69,7 +71,8 @@ class ProductSpider(CrawlSpider):
         Rule(LinkExtractor(
                 allow='/app/(.+)/',
                 restrict_css='#search_result_container'),
-             callback='parse_product')
+             callback='parse_product'),
+        Rule(LinkExtractor(allow='page=(\d+)'))
     ]
 
     def parse_product(self, response):
