@@ -88,6 +88,12 @@ class ProductItem(scrapy.Item):
                                  str_to_float)
     )
     sentiment = scrapy.Field()
+    n_reviews = scrapy.Field(
+        output_processor=Compose(
+            MapCompose(StripText(), lambda x: x.replace(',', ''), str_to_int),
+            max
+        )
+    )
     metascore = scrapy.Field(
         output_processor=Compose(TakeFirst(), StripText(), str_to_int)
     )

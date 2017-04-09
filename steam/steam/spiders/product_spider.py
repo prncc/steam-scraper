@@ -57,6 +57,7 @@ def load_product(response):
     sentiment = response.css('.game_review_summary').xpath(
         '../*[@itemprop="description"]/text()').extract()
     loader.add_value('sentiment', sentiment)
+    loader.add_css('n_reviews', '.responsive_hidden', re='\(([\d,]+) reviews\)')
 
     loader.add_xpath(
         'metascore',
