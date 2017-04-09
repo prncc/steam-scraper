@@ -1,6 +1,7 @@
 from datetime import datetime, date
 
 import scrapy
+from scrapy.loader import ItemLoader
 from scrapy.loader.processors import MapCompose, Compose, TakeFirst
 
 
@@ -30,13 +31,13 @@ def strip_text(x):
 
 
 class ProductItem(scrapy.Item):
-    url = scrapy.Field(output_processor=TakeFirst())
-    id = scrapy.Field(output_processor=TakeFirst())
-    reviews_url = scrapy.Field(output_processor=TakeFirst())
-    title = scrapy.Field(output_processor=TakeFirst())
+    url = scrapy.Field()
+    id = scrapy.Field()
+    reviews_url = scrapy.Field()
+    title = scrapy.Field()
     genre = scrapy.Field()
     developer = scrapy.Field(output_processor=TakeFirst())
-    publisher = scrapy.Field(output_processor=TakeFirst())
+    publisher = scrapy.Field()
     release_date = scrapy.Field(
         output_processor=Compose(TakeFirst(), standardize_date)
     )
@@ -46,3 +47,7 @@ class ProductItem(scrapy.Item):
     tags = scrapy.Field(
         output_processor=MapCompose(strip_text)
     )
+
+
+class ProductItemLoader(ItemLoader):
+    default_output_processor = TakeFirst()

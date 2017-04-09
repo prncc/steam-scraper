@@ -6,12 +6,12 @@ from scrapy.linkextractors import LinkExtractor
 from scrapy.loader import ItemLoader
 from scrapy.spiders import CrawlSpider, Rule
 
-from ..items import ProductItem
+from ..items import ProductItem, ProductItemLoader
 
 
 def load_product(response):
     """Load a ProductItem from the product page response."""
-    loader = ItemLoader(item=ProductItem(), response=response)
+    loader = ProductItemLoader(item=ProductItem(), response=response)
 
     url = url_query_cleaner(response.url, ['snr'], remove=True)
     loader.add_value('url', url)
