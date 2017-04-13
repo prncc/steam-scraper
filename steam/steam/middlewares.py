@@ -30,7 +30,8 @@ class CircumventAgeCheckMiddleware(RedirectMiddleware):
 
         return Request(url=request.url,
                        cookies={'mature_content': '1'},
-                       meta={'dont_cache': True})
+                       meta={'dont_cache': True},
+                       callback=spider.parse_product)
 
     def is_age_check_url(self, url):
         return True if re.findall('app/(.*)/agecheck', url) else False
