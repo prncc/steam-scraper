@@ -1,6 +1,6 @@
 import logging
 import re
-from w3lib.url import url_query_cleaner
+from w3lib.url import canonicalize_url, url_query_cleaner
 
 from scrapy.http import FormRequest
 from scrapy.linkextractors import LinkExtractor
@@ -16,6 +16,7 @@ def load_product(response):
     loader = ProductItemLoader(item=ProductItem(), response=response)
 
     url = url_query_cleaner(response.url, ['snr'], remove=True)
+    url = canonicalize_url(url)
     loader.add_value('url', url)
 
     found_id = re.findall('/app/(.*?)/', response.url)
@@ -71,7 +72,7 @@ def load_product(response):
 class ProductsSpider(CrawlSpider):
     name = 'products'
     start_urls = [
-        "http://store.steampowered.com/search/"
+        "http://store.steampowered.com/app/475320/"
     ]
 
     allowed_domains=["steampowered.com"]
