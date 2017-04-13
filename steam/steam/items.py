@@ -3,7 +3,7 @@ import logging
 
 import scrapy
 from scrapy.loader import ItemLoader
-from scrapy.loader.processors import MapCompose, Compose, TakeFirst
+from scrapy.loader.processors import Compose, Join, MapCompose, TakeFirst
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +17,10 @@ class StripText:
             return value.strip(self.chars)
         except:
             return value
+
+
+def simplify_recommended(x):
+    return False if x == 'Not Recommended' else True
 
 
 def standardize_date(x):
@@ -96,6 +100,38 @@ class ProductItem(scrapy.Item):
     )
     metascore = scrapy.Field(
         output_processor=Compose(TakeFirst(), StripText(), str_to_int)
+    )
+
+
+class ReviewItem(scrapy.Item):
+    recommended = scrapy.Field(
+        input_processor=simplify_recommended,
+        output_processor=TakeFirst(),
+    )
+    date = scrapy.Field(
+        output_processor=Compose(TakeFirst(), standardize_date)
+    )
+    text = scrapy.Field(
+        input_processor=MapCompose(StripText()),
+        output_processor=Compose(Join('\n'), StripText())
+    )
+    hours = scrapy.Field(
+        output_processor=Compose(TakeFirst(), str_to_float)
+    )
+    found_helpful = scrapy.Field(
+        output_processor=Compose(TakeFirst(), str_to_int)
+    )
+    found_unhelpful = scrapy.Field(
+        output_processor=Compose(TakeFirst(), str_to_int)
+    )
+    found_funny = scrapy.Field(
+        output_processor=Compose(TakeFirst(), str_to_int)
+    )
+    compensation = scrapy.Field()
+    username = scrapy.Field()
+    user_id = scrapy.Field()
+    products = scrapy.Field(
+        output_processor=Compose(TakeFirst(), str_to_int)
     )
 
 
