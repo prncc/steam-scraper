@@ -26,7 +26,8 @@ class CircumventAgeCheckMiddleware(RedirectMiddleware):
         if not self.is_age_check_url(redirected.url):
             return super()._redirect(redirected, request, spider, reason)
 
-        logger.debug(f"Age check triggered for {request.url}.")
+        logger.debug(f"Button-type age check triggered for {request.url}.")
+
         return Request(url=request.url,
                        cookies={'mature_content': '1'},
                        meta={'dont_cache': True})
