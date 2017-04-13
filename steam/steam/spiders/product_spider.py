@@ -92,7 +92,7 @@ class ProductsSpider(CrawlSpider):
         if '/agecheck/app' in response.url:
             logger.debug(f"Form-type age check triggered for {response.url}.")
 
-            form = response.css('form')
+            form = response.css('#agegate_box form')
 
             action = form.xpath('@action').extract_first()
             name = form.xpath('input/@name').extract_first()
@@ -105,11 +105,12 @@ class ProductsSpider(CrawlSpider):
                 'ageYear': '1955'
             }
 
-            return FormRequest(
+            yield FormRequest(
                 url=action,
                 method='POST',
                 formdata=formdata,
                 callback=self.parse_product
             )
 
-        yield load_product(response)
+        else:
+            yield load_product(response)
