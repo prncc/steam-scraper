@@ -14,7 +14,7 @@ BOT_NAME = 'steam'
 SPIDER_MODULES = ['steam.spiders']
 NEWSPIDER_MODULE = 'steam.spiders'
 
-DEPTH_LIMIT = 3
+# DEPTH_LIMIT = 3
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36'
@@ -53,9 +53,10 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'steam.middlewares.MyCustomDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': None,
+    'steam.middlewares.CircumventAgeCheckMiddleware': 600,
+}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -87,5 +88,5 @@ AUTOTHROTTLE_TARGET_CONCURRENCY = 4.0
 HTTPCACHE_ENABLED = True
 HTTPCACHE_EXPIRATION_SECS = 0  # Never expire.
 HTTPCACHE_DIR = 'httpcache'
-HTTPCACHE_IGNORE_HTTP_CODES = []
+HTTPCACHE_IGNORE_HTTP_CODES = [301, 302, 303, 306, 307, 308]
 HTTPCACHE_STORAGE = 'steam.middlewares.SteamCacheStorage'

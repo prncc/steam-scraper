@@ -1,12 +1,16 @@
+import logging
 import re
 from w3lib.url import url_query_cleaner
 
+import scrapy
 from scrapy.http import FormRequest, Request
 from scrapy.linkextractors import LinkExtractor
-from scrapy.loader import ItemLoader
 from scrapy.spiders import CrawlSpider, Rule
+from scrapy.downloadermiddlewares.cookies import CookiesMiddleware
 
 from ..items import ProductItem, ProductItemLoader
+
+logger = logging.getLogger(__name__)
 
 
 def load_product(response):
@@ -68,7 +72,10 @@ def load_product(response):
 
 class ProductsSpider(CrawlSpider):
     name = 'products'
-    start_urls = ["http://store.steampowered.com/search/"]
+    start_urls = [
+        "http://store.steampowered.com/search/"
+    ]
+
     allowed_domains=["steampowered.com"]
 
     rules = [
@@ -76,11 +83,13 @@ class ProductsSpider(CrawlSpider):
                 allow='/app/(.+)/',
                 restrict_css='#search_result_container'),
              callback='parse_product'),
-        Rule(LinkExtractor(allow='page=(\d+)'))
+        Rule(LinkExtractor(
+                allow='page=(\d+)',
+                restrict_css='.search_pagination_right'))
     ]
 
     def parse_product(self, response):
-        # Circumvent age check.
+        # Circumvent age selection form.
         if '/agecheck/app' in response.url:
             form = response.css('form')
 
@@ -103,3 +112,16 @@ class ProductsSpider(CrawlSpider):
             )
 
         yield load_product(response)
+
+
+class TestSpider(scrapy.Spider):
+    name = "test"
+    start_urls = ["http://store.steampowered.com/app/454230"]
+
+    def parse(self, response):
+        if re.findall('app/(.*)/agecheck', response.url):
+            return Request(url="http://store.steampowered.com/app/454230",
+                           cookies={'mature_content': '/app/454230'},
+                           meta={'dont_cache': True})
+
+        logger.info(f"Made it to {response.url}!")
