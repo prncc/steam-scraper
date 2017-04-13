@@ -104,6 +104,7 @@ class ProductItem(scrapy.Item):
 
 
 class ReviewItem(scrapy.Item):
+    product_id = scrapy.Field()
     recommended = scrapy.Field(
         input_processor=simplify_recommended,
         output_processor=TakeFirst(),
@@ -137,3 +138,7 @@ class ReviewItem(scrapy.Item):
 
 class ProductItemLoader(ItemLoader):
     default_output_processor=Compose(TakeFirst(), StripText())
+
+
+class ReviewItemLoader(ItemLoader):
+    default_output_processor = TakeFirst()

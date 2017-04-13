@@ -1,17 +1,16 @@
 import scrapy
 from scrapy.http import FormRequest
-from scrapy.loader import ItemLoader
-from scrapy.loader.processors import TakeFirst
 
-from ..items import ReviewItem
+from ..items import ReviewItem, ReviewItemLoader
 
 
-def load_review(review):
+def load_review(review, product_id):
     """
     Load a ReviewItem from a single review.
     """
-    loader = ItemLoader(
-        ReviewItem(default_output_processor=TakeFirst()), review)
+    loader = ReviewItemLoader(ReviewItem(), review)
+
+    loader.add_value('product_id', product_id)
 
     # Review data.
     loader.add_css('recommended', '.title::text')
@@ -35,15 +34,23 @@ def load_review(review):
 
 
 class ReviewSpider(scrapy.Spider):
-    name = 'steam'
-    start_urls = ["http://store.steampowered.com/search/"]
+    name = 'reviews'
+    start_urls = [
+        "http://steamcommunity.com/app/460790/reviews/?browsefilter=mostrecent&p=1"
+    ]
 
     def parse(self, response):
+        try:
+            product_id = response.meta['product_id']
+        except:
+            product_id = None
+
         # Load all reviews on current page.
         reviews = response.css('div .apphub_Card')
         for review in reviews:
-            yield load_review(review)
+            yield load_review(review, product_id)
 
+        # Navigate to next page.
         form = response.css('form')
         yield self.process_pagination_form(form)
 
