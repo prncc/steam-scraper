@@ -28,20 +28,25 @@ def standardize_date(x):
     Convert x from recognized input formats to desired output format,
     or leave unchanged if input format is not recognized.
     """
-    try:
-        return datetime.strptime(x, "%b %d, %Y").strftime("%Y-%m-%d")
-    except ValueError as e:
-        logger.debug(f"Failed to process '{x}': {e.args[0]}.")
-        pass
+    fmt_fail = False
+
+    for fmt in ["%b %d, %Y", "%B %d, %Y"]:
+        try:
+            return datetime.strptime(x, fmt).strftime("%Y-%m-%d")
+        except ValueError:
+            fmt_fail = True
 
     # Induce year to current year if it is missing.
-    try:
-        d = datetime.strptime(x, "%b %d")
-        d = d.replace(year=date.today().year)
-        return d.strftime("%Y-%m-%d")
-    except ValueError as e:
-        logger.debug(f"Failed to process '{x}': {e.args[0]}.")
-        pass
+    for fmt in ["%b %d", "%B %d"]:
+        try:
+            d = datetime.strptime(x, fmt)
+            d = d.replace(year=date.today().year)
+            return d.strftime("%Y-%m-%d")
+        except ValueError:
+            fmt_fail = True
+
+    if fmt_fail:
+        logger.debug(f"Could not process date {x}")
 
     return x
 
