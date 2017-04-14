@@ -30,6 +30,12 @@ def load_review(review, product_id):
     loader.add_value('found_unhelpful', feedback, re='of ([\d,]+)')
     loader.add_value('found_funny', feedback, re='([\d,]+).*funny')
 
+    early_access = loader.get_css('.early_access_review')
+    if early_access:
+        loader.add_value('early_access', True)
+    else:
+        loader.add_value('early_access', False)
+
     return loader.load_item()
 
 

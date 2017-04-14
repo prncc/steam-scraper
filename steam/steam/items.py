@@ -140,6 +140,7 @@ class ReviewItem(scrapy.Item):
     products = scrapy.Field(
         output_processor=Compose(TakeFirst(), str_to_int)
     )
+    early_access = scrapy.Field()
 
 
 class ProductItemLoader(ItemLoader):
