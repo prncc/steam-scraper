@@ -101,6 +101,7 @@ class ProductItem(scrapy.Item):
     metascore = scrapy.Field(
         output_processor=Compose(TakeFirst(), StripText(), str_to_int)
     )
+    early_access = scrapy.Field()
 
 
 class ReviewItem(scrapy.Item):

@@ -66,6 +66,12 @@ def load_product(response):
         'metascore',
         '//div[@id="game_area_metascore"]/div[contains(@class, "score")]/text()')
 
+    early_access = response.css('.early_access_header')
+    if early_access:
+        loader.add_value('early_access', True)
+    else:
+        loader.add_value('early_access', False)
+
     return loader.load_item()
 
 
