@@ -57,13 +57,13 @@ class ReviewSpider(scrapy.Spider):
             yield load_review(review, product_id)
 
         # Navigate to next page.
-        form = response.css('form')
+        form = response.xpath('//form[contains(@id, "MoreContentForm")]')
         yield self.process_pagination_form(form)
 
     def process_pagination_form(self, form):
         action = form.xpath('@action').extract_first()
         names = form.xpath('input/@name').extract()
-        values = form.xpath('input/@id').extract()
+        values = form.xpath('input/@value').extract()
 
         formdata = dict(zip(names, values))
 
