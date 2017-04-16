@@ -111,6 +111,8 @@ class ProductItem(scrapy.Item):
 
 class ReviewItem(scrapy.Item):
     product_id = scrapy.Field()
+    page = scrapy.Field()
+    page_order = scrapy.Field()
     recommended = scrapy.Field(
         input_processor=simplify_recommended,
         output_processor=TakeFirst(),
