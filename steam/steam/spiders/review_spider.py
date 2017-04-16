@@ -41,9 +41,28 @@ def load_review(review, product_id):
 
 class ReviewSpider(scrapy.Spider):
     name = 'reviews'
-    start_urls = [
-        "http://steamcommunity.com/app/460790/reviews/?browsefilter=mostrecent&p=1"
+    test_urls = [
+        "http://steamcommunity.com/app/256460/reviews/?browsefilter=mostrecent&p=1",
+        "http://steamcommunity.com/app/489140/reviews/?browsefilter=mostrecent&p=1"
+
     ]
+
+    def __init__(self, url_file=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.url_file = url_file
+
+    def read_urls(self):
+        with open(self.url_file, 'r') as f:
+            for url in f:
+                url = url.strip()
+                if url:
+                    yield scrapy.Request(url, callback=self.parse)
+
+    def start_requests(self):
+        if self.url_file:
+            yield from self.read_urls()
+        else:
+            return self.test_urls
 
     def parse(self, response):
         try:
