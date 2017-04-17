@@ -8,14 +8,11 @@ Run example:
 """
 import argparse
 import json
-import logging
 import math
 import os
 
 import numpy as np
 import pandas as pd
-
-logger = logging.getLogger(__name__)
 
 
 def parse_args():
@@ -40,7 +37,6 @@ def parse_args():
 def main():
     args = parse_args()
 
-    rows = None
     with open(args.scraped_products) as f:
         rows = [json.loads(l) for l in f]
 
@@ -67,7 +63,7 @@ def main():
             f.write('\n'.join(piece))
 
     n_items = int(df.loc[blx, 'n_reviews'].sum())
-    logger.info("There are <={0} reviews to be scraped.".format(n_items))
+    print("There are <={0} reviews to be scraped.".format(n_items))
 
 if __name__ == "__main__":
     main()
