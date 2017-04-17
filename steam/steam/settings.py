@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
-
-# Scrapy settings for steam project
-#
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     http://doc.scrapy.org/en/latest/topics/settings.html
-#     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+from smart_getenv import getenv
 
 BOT_NAME = 'steam'
 
@@ -90,3 +81,6 @@ HTTPCACHE_EXPIRATION_SECS = 0  # Never expire.
 HTTPCACHE_DIR = 'httpcache'
 HTTPCACHE_IGNORE_HTTP_CODES = [301, 302, 303, 306, 307, 308]
 HTTPCACHE_STORAGE = 'steam.middlewares.SteamCacheStorage'
+
+AWS_ACCESS_KEY_ID = getenv('AWS_ACCESS_KEY_ID', type=str, default=None)
+AWS_SECRET_ACCESS_KEY = getenv('AWS_SECRET_ACCESS_KEY', type=str, default=None)
