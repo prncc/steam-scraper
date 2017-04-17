@@ -62,7 +62,7 @@ def get_product_id(response):
 
     if not product_id:
         try:
-            return re.findall("app/(.+)/", response.url)[0]
+            return re.findall("app/(.+?)/", response.url)[0]
         except:
             return None
     else:
