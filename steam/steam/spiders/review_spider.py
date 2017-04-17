@@ -92,10 +92,8 @@ class ReviewSpider(scrapy.Spider):
         if self.url_file:
             yield from self.read_urls()
         else:
-            yield from iter([
-                Request(url, callback=self.parse)
-                for url in self.test_urls
-            ])
+            for url in self.test_urls:
+                yield Request(url, callback=self.parse)
 
     def parse(self, response):
         page = get_page(response)
