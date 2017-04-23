@@ -22,7 +22,7 @@ copy_urls() {
 }
 
 copy_egg() {
-    scp ../dist/$EGG scrapy-runner-$1:/home/ubuntu/
+    scp ../steam/dist/$EGG scrapy-runner-$1:/home/ubuntu/
 }
 
 add_egg() {
