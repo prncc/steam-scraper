@@ -10,6 +10,7 @@ import argparse
 import json
 import math
 import os
+from random import shuffle
 
 import numpy as np
 import pandas as pd
@@ -48,6 +49,7 @@ def main():
     blx = blx_nontrivial & blx_has_reviews
 
     urls = df.loc[blx, 'reviews_url'].unique()
+    urls = shuffle(urls)
 
     n = len(urls)
     step = int(math.ceil(float(n)/args.pieces))
