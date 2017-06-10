@@ -72,9 +72,9 @@ def get_product_id(response):
 class ReviewSpider(scrapy.Spider):
     name = 'reviews'
     test_urls = [
-        "http://steamcommunity.com/app/256460/reviews/?browsefilter=mostrecent&p=1",
-        "http://steamcommunity.com/app/489140/reviews/?browsefilter=mostrecent&p=1"
-
+        "http://steamcommunity.com/app/316790/reviews/?browsefilter=mostrecent&p=1",  # Grim Fandango
+        "http://steamcommunity.com/app/207610/reviews/?browsefilter=mostrecent&p=1",  # The Walking Dead
+        "http://steamcommunity.com/app/414700/reviews/?browsefilter=mostrecent&p=1"   # Outlast 2
     ]
 
     def __init__(self, url_file=None, *args, **kwargs):
@@ -92,10 +92,8 @@ class ReviewSpider(scrapy.Spider):
         if self.url_file:
             yield from self.read_urls()
         else:
-            yield from iter([
-                Request(url, callback=self.parse)
-                for url in self.test_urls
-            ])
+            for url in self.test_urls:
+                yield Request(url, callback=self.parse)
 
     def parse(self, response):
         page = get_page(response)
@@ -126,4 +124,3 @@ class ReviewSpider(scrapy.Spider):
             callback=self.parse,
             meta=meta
         )
-

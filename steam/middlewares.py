@@ -23,7 +23,9 @@ class SteamCacheStorage(FilesystemCacheStorage):
 
 class CircumventAgeCheckMiddleware(RedirectMiddleware):
     def _redirect(self, redirected, request, spider, reason):
-        if not self.is_age_check_url(redirected.url):
+        # Only overrule the default redirect behavior
+        # in the case of mature content checkpoints.
+        if not re.findall('app/(.*)/agecheck', redirected.url):
             return super()._redirect(redirected, request, spider, reason)
 
         logger.debug(f"Button-type age check triggered for {request.url}.")
@@ -32,6 +34,3 @@ class CircumventAgeCheckMiddleware(RedirectMiddleware):
                        cookies={'mature_content': '1'},
                        meta={'dont_cache': True},
                        callback=spider.parse_product)
-
-    def is_age_check_url(self, url):
-        return True if re.findall('app/(.*)/agecheck', url) else False
