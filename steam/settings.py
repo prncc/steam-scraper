@@ -76,7 +76,7 @@ AUTOTHROTTLE_TARGET_CONCURRENCY = 4.0
 
 # Enable and configure HTTP caching (disabled by default)
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
-HTTPCACHE_ENABLED = False
+HTTPCACHE_ENABLED = True
 HTTPCACHE_EXPIRATION_SECS = 0  # Never expire.
 HTTPCACHE_DIR = 'httpcache'
 HTTPCACHE_IGNORE_HTTP_CODES = [301, 302, 303, 306, 307, 308]
