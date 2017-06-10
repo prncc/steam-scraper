@@ -5,20 +5,30 @@ from w3lib.url import url_query_cleaner
 
 from scrapy import Request
 from scrapy.downloadermiddlewares.redirect import RedirectMiddleware
+from scrapy.dupefilters import RFPDupeFilter
 from scrapy.extensions.httpcache import FilesystemCacheStorage
 from scrapy.utils.request import request_fingerprint
 
 logger = logging.getLogger(__name__)
 
 
+def strip_snr(request):
+    """Removes snr query query from request.url and returns the modified request."""
+    url = url_query_cleaner(request.url, ['snr'], remove=True)
+    return request.replace(url=url)
+
+
 class SteamCacheStorage(FilesystemCacheStorage):
     def _get_request_path(self, spider, request):
-        # For the purposes of caching we wish to discard the
-        # unstable 'snr' query field.
-        url = url_query_cleaner(request.url, ['snr'], remove=True)
-        request = request.replace(url=url)
+        request = strip_snr(request)
         key = request_fingerprint(request)
         return os.path.join(self.cachedir, spider.name, key[0:2], key)
+
+
+class SteamDupeFilter(RFPDupeFilter):
+    def request_fingerprint(self, request):
+        request = strip_snr(request)
+        return super().request_fingerprint(request)
 
 
 class CircumventAgeCheckMiddleware(RedirectMiddleware):
