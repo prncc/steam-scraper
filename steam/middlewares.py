@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def strip_snr(request):
-    """Removes snr query query from request.url and returns the modified request."""
+    """Remove snr query query from request.url and return the modified request."""
     url = url_query_cleaner(request.url, ['snr'], remove=True)
     return request.replace(url=url)
 
