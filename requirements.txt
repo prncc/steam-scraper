@@ -8,7 +8,6 @@ constantly==15.1.0
 cryptography==1.8.1
 cssselect==1.0.1
 docutils==0.13.1
-Fabric3==1.13.1.post1
 idna==2.5
 incremental==16.10.1
 jmespath==0.9.2
