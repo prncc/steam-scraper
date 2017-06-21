@@ -3,7 +3,7 @@
 FUNC=$1
 SRVR=$2
 
-EGG="steam_scraper-0.9.2-py3.6.egg"
+EGG="steam_scraper-1.0-py3.6.egg"
 
 if [ -z "$FUNC" ]
 then
@@ -22,11 +22,11 @@ copy_urls() {
 }
 
 copy_egg() {
-    scp ../dist/$EGG scrapy-runner-$1:/home/ubuntu/
+    scp ../dist/$EGG scrapy-runner-$1:/home/ubuntu/run
 }
 
 add_egg() {
-    ssh -f scrapy-runner-$1 'cd /home/ubuntu/ && curl http://localhost:6800/addversion.json -F project=steam -F egg=@'$EGG
+    ssh -f scrapy-runner-$1 'cd /home/ubuntu/run && curl http://localhost:6800/addversion.json -F project=steam -F egg=@'$EGG
 }
 
 list_versions() {
