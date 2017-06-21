@@ -54,7 +54,7 @@ job_start() {
 }
 
 all() {
-    for i in {1..10}
+    for i in {1..3}
     do
 	local n=$(printf %02d $i)
 	${1} $n
@@ -71,9 +71,9 @@ else
         exit 1
     fi
 
-    if ! ((SRVR >= 1 && SRVR <= 10))
+    if ! ((SRVR >= 1 && SRVR <= 3))
     then
-        echo "Server must be between 1 and 10."
+        echo "Server must be between 1 and 3."
         exit 1
     fi
 
