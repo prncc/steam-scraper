@@ -15,21 +15,21 @@ cd steam-scraper
 virtualenv -p python3.6 env
 . env/bin/activate
 ```
-Finally, install the used Python packages:
+Install Python requirements via:
 ```bash
 pip install -r requirements.txt
 ```
+
 By the way, on macOS you can install Python 3.6 via [homebrew](https://brew.sh):
  ```bash
  brew install python3
 ```
-
 On Ubuntu you can use [instructions posted on askubuntu.com](https://askubuntu.com/questions/865554/how-do-i-install-python-3-6-using-apt-get).
 
 ## Crawling the Products
 
 The purpose of `ProductSpider` is to discover product pages on the [Steam product listing](http://store.steampowered.com/search/?sort_by=Released_DESC) and extract useful metadata from them.
-A neat feature of this spider is that it automatically handle's Steam's age verification gateways.
+A neat feature of this spider is that it automatically navigates through Steam's age verification checkpoints.
 You can initiate the multi-hour crawl with
 ```bash
 scrapy crawl products -o output/products_all.jl --logfile=output/products_all.log --loglevel=INFO -s JOBDIR=output/products_all_job -s HTTPCACHE_ENABLED=False
@@ -59,7 +59,7 @@ Here's some example output:
 
 ## Extracting the Reviews
 
-The purpose of `ReviewSpider` is to scrape all user-submitted reviews of a particular product from the Steam community portal. 
+The purpose of `ReviewSpider` is to scrape all user-submitted reviews of a particular product from the [Steam community portal](http://steamcommunity.com/). 
 By default, it starts from URLs listed in its `test_urls` parameter:
 ```python
 class ReviewSpider(scrapy.Spider):
@@ -70,7 +70,7 @@ class ReviewSpider(scrapy.Spider):
         "http://steamcommunity.com/app/414700/reviews/?browsefilter=mostrecent&p=1"   # Outlast 2
     ]
 ```
-but can alternatively ingest a text file with contents of the form
+It can alternatively ingest a text file containing URLs such as
 ```
 http://steamcommunity.com/app/316790/reviews/?browsefilter=mostrecent&p=1
 http://steamcommunity.com/app/207610/reviews/?browsefilter=mostrecent&p=1
@@ -115,7 +115,7 @@ Host scrapy-runner-01
      HostName <server's IP>
      IdentityFile ~/.ssh/id_rsa
 ```
-This name is expected by the `scrapydee.sh` helper script included in this repository.
+A hostname of this form is expected by the `scrapydee.sh` helper script included in this repository.
 Make sure you can connect with `ssh scrappy-runner-01`.
 
 ### Remote Server Setup
@@ -127,7 +127,7 @@ sudo add-apt-repository ppa:jonathonf/python-3.6
 sudo apt update
 sudo apt install python3.6 python3.6-dev virtualenv python-pip
 ```
-Then, install `scrapyd` and the remaining requirements in a dedicated `run` folder on the remote server: 
+Then, install scrapyd and the remaining requirements in a dedicated `run` directory on the remote server: 
 ```bash
 mkdir run && cd run
 virtualenv -p python3.6 env
@@ -143,11 +143,11 @@ You may wish to use something like [screen](https://www.gnu.org/software/screen/
 ### Controlling the Job
 
 You can issue commands to the scrapyd process running on the remote machine using a simple [HTTP JSON API](http://scrapyd.readthedocs.io/en/stable/index.html).
-First, we create an egg for this project using
+First, create an egg for this project:
 ```bash
 python setup.py bdist_egg
 ```
-You can copy the egg and your review url file to `scrapy-runner-01` via
+Copy the egg and your review url file to `scrapy-runner-01` via
 ```bash
 scp output/review_urls_01.txt scrapy-runner-01:/home/ubuntu/run/
 scp dist/steam_scraper-1.0-py3.6.egg scrapy-runner-01:/home/ubuntu/run
@@ -156,18 +156,23 @@ and add it to scrapyd's job directory via
 ```bash
 ssh -f scrapy-runner-01 'cd /home/ubuntu/run && curl http://localhost:6800/addversion.json -F project=steam -F egg=@steam_scraper-1.0-py3.6.egg'
 ```
-If you opened port 6800 to TCP traffic coming from your home IP on `scrappy-runner-01` using AWS's security group sytem, you could issue this command without going through SSH.
-This is a good time to mention that there exists a [scrapyd-client](https://github.com/scrapy/scrapyd-client) project for deploying jobs to scrapyd equipped servers.
+Opening port 6800 to TCP traffic coming from your home IP would allow you to issue this command without going through SSH.
+If this command doesn't work, you may need to edit `scrapyd.conf` to contain
+```
+bind_address = 0.0.0.0
+```
+in the `[scrapyd]` section.
+This is a good time to mention that there exists a [scrapyd-client](https://github.com/scrapy/scrapyd-client) project for deploying eggs to scrapyd equipped servers.
 I chose not to use it because it doesn't know about servers already set up in `~/.ssh/config` and so requires repetitive configuration.
 
 Finally, start the job with something like
 ```bash
 ssh scrapy-runner-01 'curl http://localhost:6800/schedule.json -d project=steam -d spider=reviews -d url_file="/home/ubuntu/run/review_urls_01.txt" -d jobid=part_01 -d setting=FEED_URI="s3://'$STEAM_S3_BUCKET'/%(name)s/part_01/%(time)s.jl" -d setting=AWS_ACCESS_KEY_ID='$AWS_ACCESS_KEY_ID' -d setting=AWS_SECRET_ACCESS_KEY='$AWS_SECRET_ACCESS_KEY' -d setting=LOG_LEVEL=INFO'
 ```
-This command assumes you have set up an S3 bucket and that your server can see the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
-It should be pretty easy to customize it, however.
+This command assumes you have set up an S3 bucket and the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
+It should be pretty easy to customize it for non-S3 output, however.
 
-The `scrapydee.sh` helper script included in the `scripts` directory of this repository has some shortcuts for issuing commands to scrapyd-equipped on servers with names of the form `scrapy-runner-01`.
+The `scrapydee.sh` helper script included in the `scripts` directory of this repository has some shortcuts for issuing commands to scrapyd-equipped servers with hostnames of the form `scrapy-runner-01`.
 For example, the command
 ```bash
 ./scripts/scrapydee.sh status 1
@@ -177,7 +182,7 @@ For example, the command
 will run the `status()` function defined in `scrapydee.sh` on `scrapy-runner-01`.
 See that file for more command examples.
 You can also run each of the included commands on multiple servers:
-First, change the `all()` function withing `scrapydee.sh` to match the number of servers to your configuration.
+First, change the `all()` function within `scrapydee.sh` to match the number of servers you have configured.
 Then, issue a command such as
 ```bash
 ./scripts/scrapydee.sh status all
