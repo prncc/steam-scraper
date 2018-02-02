@@ -20,7 +20,7 @@ class StripText:
 
 
 def simplify_recommended(x):
-    return False if x == 'Not Recommended' else True
+    return True if x == 'Recommended' else False
 
 
 def standardize_date(x):
@@ -114,8 +114,7 @@ class ReviewItem(scrapy.Item):
     page = scrapy.Field()
     page_order = scrapy.Field()
     recommended = scrapy.Field(
-        input_processor=simplify_recommended,
-        output_processor=TakeFirst(),
+        output_processor=Compose(TakeFirst(), simplify_recommended),
     )
     date = scrapy.Field(
         output_processor=Compose(TakeFirst(), standardize_date)
