@@ -72,12 +72,8 @@ def get_product_id(response):
 class ReviewSpider(scrapy.Spider):
     name = 'reviews'
     test_urls = [
-        # Grim Fandango
-        'http://steamcommunity.com/app/316790/reviews/?browsefilter=mostrecent&p=1',
-        # The Walking Dead
-        'http://steamcommunity.com/app/207610/reviews/?browsefilter=mostrecent&p=1',
-        # Outlast 2
-        'http://steamcommunity.com/app/414700/reviews/?browsefilter=mostrecent&p=1',
+        # Full Metal Furies
+        'http://steamcommunity.com/app/416600/reviews/?browsefilter=mostrecent&p=1',
     ]
 
     def __init__(self, url_file=None, *args, **kwargs):
