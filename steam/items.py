@@ -30,18 +30,18 @@ def standardize_date(x):
     """
     fmt_fail = False
 
-    for fmt in ["%b %d, %Y", "%B %d, %Y"]:
+    for fmt in ['%b %d, %Y', '%B %d, %Y']:
         try:
-            return datetime.strptime(x, fmt).strftime("%Y-%m-%d")
+            return datetime.strptime(x, fmt).strftime('%Y-%m-%d')
         except ValueError:
             fmt_fail = True
 
     # Induce year to current year if it is missing.
-    for fmt in ["%b %d", "%B %d"]:
+    for fmt in ['%b %d', '%B %d']:
         try:
             d = datetime.strptime(x, fmt)
             d = d.replace(year=date.today().year)
-            return d.strftime("%Y-%m-%d")
+            return d.strftime('%Y-%m-%d')
         except ValueError:
             fmt_fail = True
 
