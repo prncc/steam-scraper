@@ -63,7 +63,7 @@ def get_product_id(response):
     if not product_id:
         try:
             return re.findall("app/(.+?)/", response.url)[0]
-        except:
+        except:  # noqa E722
             return None
     else:
         return product_id
@@ -72,9 +72,12 @@ def get_product_id(response):
 class ReviewSpider(scrapy.Spider):
     name = 'reviews'
     test_urls = [
-        "http://steamcommunity.com/app/316790/reviews/?browsefilter=mostrecent&p=1",  # Grim Fandango
-        "http://steamcommunity.com/app/207610/reviews/?browsefilter=mostrecent&p=1",  # The Walking Dead
-        "http://steamcommunity.com/app/414700/reviews/?browsefilter=mostrecent&p=1"   # Outlast 2
+        # Grim Fandango
+        'http://steamcommunity.com/app/316790/reviews/?browsefilter=mostrecent&p=1',
+        # The Walking Dead
+        'http://steamcommunity.com/app/207610/reviews/?browsefilter=mostrecent&p=1',
+        # Outlast 2
+        'http://steamcommunity.com/app/414700/reviews/?browsefilter=mostrecent&p=1',
     ]
 
     def __init__(self, url_file=None, *args, **kwargs):
