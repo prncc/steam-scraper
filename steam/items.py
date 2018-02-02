@@ -15,7 +15,7 @@ class StripText:
     def __call__(self, value):
         try:
             return value.strip(self.chars)
-        except:
+        except:  # noqa E722
             return value
 
 
@@ -46,7 +46,7 @@ def standardize_date(x):
             fmt_fail = True
 
     if fmt_fail:
-        logger.debug(f"Could not process date {x}")
+        logger.debug(f'Could not process date {x}')
 
     return x
 
@@ -55,14 +55,14 @@ def str_to_float(x):
     x = x.replace(',', '')
     try:
         return float(x)
-    except:
+    except:  # noqa E722
         return x
 
 
 def str_to_int(x):
     try:
         return int(str_to_float(x))
-    except:
+    except:  # noqa E722
         return x
 
 
@@ -146,7 +146,7 @@ class ReviewItem(scrapy.Item):
 
 
 class ProductItemLoader(ItemLoader):
-    default_output_processor=Compose(TakeFirst(), StripText())
+    default_output_processor = Compose(TakeFirst(), StripText())
 
 
 class ReviewItemLoader(ItemLoader):
