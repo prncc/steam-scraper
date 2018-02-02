@@ -91,6 +91,17 @@ class ProductSpider(CrawlSpider):
              restrict_css='.search_pagination_right'))
     ]
 
+    def __init__(self, steam_id=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.steam_id = steam_id
+
+    def start_requests(self):
+        if self.steam_id:
+            yield Request(f'http://store.steampowered.com/app/{self.steam_id}/',
+                          callback=self.parse_product)
+        else:
+            yield from super().start_requests()
+
     def parse_product(self, response):
         # Circumvent age selection form.
         if '/agecheck/app' in response.url:
