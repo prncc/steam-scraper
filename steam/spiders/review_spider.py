@@ -76,9 +76,10 @@ class ReviewSpider(scrapy.Spider):
         'http://steamcommunity.com/app/416600/reviews/?browsefilter=mostrecent&p=1',
     ]
 
-    def __init__(self, url_file=None, *args, **kwargs):
+    def __init__(self, url_file=None, steam_id=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.url_file = url_file
+        self.steam_id = steam_id
 
     def read_urls(self):
         with open(self.url_file, 'r') as f:
@@ -88,7 +89,13 @@ class ReviewSpider(scrapy.Spider):
                     yield scrapy.Request(url, callback=self.parse)
 
     def start_requests(self):
-        if self.url_file:
+        if self.steam_id:
+            url = (
+                f'http://steamcommunity.com/app/{self.steam_id}/reviews/'
+                '?browsefilter=mostrecent&p=1'
+            )
+            yield Request(url, callback=self.parse)
+        elif self.url_file:
             yield from self.read_urls()
         else:
             for url in self.test_urls:
