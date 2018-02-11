@@ -27,3 +27,5 @@ HTTPCACHE_STORAGE = 'steam.middlewares.SteamCacheStorage'
 
 AWS_ACCESS_KEY_ID = getenv('AWS_ACCESS_KEY_ID', type=str, default=None)
 AWS_SECRET_ACCESS_KEY = getenv('AWS_SECRET_ACCESS_KEY', type=str, default=None)
+
+FEED_EXPORT_ENCODING = 'utf-8'
